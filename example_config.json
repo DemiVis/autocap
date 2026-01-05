@@ -1,0 +1,15 @@
+{
+    "system": {
+        "webroot": "/media/mounted_drive",
+        "log_dir": "logs"
+    },
+    "location": {
+        "latitude": 34.03,
+        "longitude": -118.15,
+        "timezone": "America/Los_Angeles"
+    },
+    "cameras": {
+        "cam1": "rtsp://admin:password@192.168.1.101:554/stream1",
+        "cam2": "rtsp://admin:password@192.168.1.102:554/stream1"
+    }
+}

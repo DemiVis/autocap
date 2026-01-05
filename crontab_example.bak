@@ -1,0 +1,44 @@
+# Edit this file to introduce tasks to be run by cron.
+# 
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+# 
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').
+# 
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+# 
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+# 
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+# 
+# For more information see the manual pages of crontab(5) and cron(8)
+# 
+# m h  dom mon dow   command
+
+# --- SUNRISE RECORDINGS ---
+PROJ_ROOT=/home/pi/autocap/
+LOG_DIR=$PROJ_ROOT/webroot/logs/
+# Run at 3:00 AM daily.
+# Records Cam1 from 20 mins BEFORE sunrise to 30 mins AFTER.
+0 3 * * * /usr/bin/python3 $PROJ_ROOT/scheduler_sun.py --cam cam1 --mode sunrise --start_offset -20 --end_offset 30 --speed 20.0 >> $LOG_DIR/logs_sunrise_cam1.txt 2>&1
+0 3 * * * /usr/bin/python3 $PROJ_ROOT/scheduler_sun.py --cam cam2 --mode sunrise --start_offset -10 --end_offset 20 --speed 20.0 >> $LOG_DIR/logs_sunrise_cam2.txt 2>&1
+
+# --- SUNSET RECORDINGS ---
+# Run at 12:00 PM (Noon) daily.
+# Records Cam2 from 10 mins BEFORE sunset to 45 mins AFTER.
+#0 15 * * * /usr/bin/python3 $PROJ_ROOT/scheduler_sun.py --cam cam2 --mode sunset --start_offset -10 --end_offset 45 --speed 2.0 >> $LOG_DIR/logs_sunset_cam2.txt 2>&1
+
+# --- FIXED SCHEDULE ---
+# Keep your fixed schedule as is (11:30 to 13:05)
+#30 11 * * * /usr/bin/python3 $PROJ_ROOT/record.py --cam cam1 --duration 5700 >> $LOG_DIR/logs_fixed_cam1.txt 2>&1
+
+# --- CLEANUP ---
+# Delete old videos every night at 1AM
+#0 1 * * * find /var/www/html -name "*.mp4" -type f -mtime +14 -delete

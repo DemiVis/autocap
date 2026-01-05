@@ -1,0 +1,6 @@
+# ignore all videos since they're large and shouldn't go into git
+**.mp4
+
+# ignore the actual config file (secrets!) and real crontab (details about local system)
+config.json 
+crontab.bak
