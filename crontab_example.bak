@@ -22,21 +22,24 @@
 # 
 # m h  dom mon dow   command
 
-# --- SUNRISE RECORDINGS ---
 PROJ_ROOT=/home/pi/autocap/
 LOG_DIR=$PROJ_ROOT/webroot/logs/
-# Run at 3:00 AM daily.
-# Records Cam1 from 20 mins BEFORE sunrise to 30 mins AFTER.
+
+# run the indexer script every 5min to make sure its up to date
+*/5 * * * * /usr/bin/python3 #PROJ_ROOT/indexer.py
+
+# dump current crontab config into a log file
+*/15 * * * * crontab -l > $LOG_DIR/crontab_config.log 
+
+# Run sunrise scripts at 3:00 AM daily, always before sunrise here
 0 3 * * * /usr/bin/python3 $PROJ_ROOT/scheduler_sun.py --cam cam1 --mode sunrise --start_offset -20 --end_offset 30 --speed 20.0 >> $LOG_DIR/logs_sunrise_cam1.txt 2>&1
 0 3 * * * /usr/bin/python3 $PROJ_ROOT/scheduler_sun.py --cam cam2 --mode sunrise --start_offset -10 --end_offset 20 --speed 20.0 >> $LOG_DIR/logs_sunrise_cam2.txt 2>&1
 
-# --- SUNSET RECORDINGS ---
-# Run at 12:00 PM (Noon) daily.
-# Records Cam2 from 10 mins BEFORE sunset to 45 mins AFTER.
-#0 15 * * * /usr/bin/python3 $PROJ_ROOT/scheduler_sun.py --cam cam2 --mode sunset --start_offset -10 --end_offset 45 --speed 2.0 >> $LOG_DIR/logs_sunset_cam2.txt 2>&1
+# Run sunset scripts at 3:00 PM daily, always before sunset here.
+0 15 * * * /usr/bin/python3 $PROJ_ROOT/scheduler_sun.py --cam cam1 --mode sunset --start_offset -20 --end_offset 30 --speed 20.0 >> $LOG_DIR/logs_sunset_cam1.txt 2>&1
+0 15 * * * /usr/bin/python3 $PROJ_ROOT/scheduler_sun.py --cam cam2 --mode sunset --start_offset -10 --end_offset 45 --speed 20.0 >> $LOG_DIR/logs_sunset_cam2.txt 2>&1
 
-# --- FIXED SCHEDULE ---
-# Keep your fixed schedule as is (11:30 to 13:05)
+# example of a fixed schedule to record at the same time every day
 #30 11 * * * /usr/bin/python3 $PROJ_ROOT/record.py --cam cam1 --duration 5700 >> $LOG_DIR/logs_fixed_cam1.txt 2>&1
 
 # --- CLEANUP ---
