@@ -52,12 +52,20 @@ def main():
     # Calculate Solar Event Time
     sun = Sun(args.lat, args.long)
     now = datetime.datetime.now(tz)
+    now_date = now.date()
+    event_time = datetime.datetime(1970, 1, 1)
     
-    if args.mode == 'sunrise':
-        event_time = sun.get_sunrise_time(datetime.datetime.utcnow()).astimezone(tz)
-    else:
-        event_time = sun.get_sunset_time(datetime.datetime.utcnow()).astimezone(tz)
+    while event_time.date() != now.date():
+        # sometimes timezones are a bitch and I'm lazy so we're fixing this like this, there's probably a better way
+        if args.mode == 'sunrise':
+            event_time = sun.get_sunrise_time(now_date).astimezone(tz)
+        else:
+            event_time = sun.get_sunset_time(now_date).astimezone(tz)
 
+        # now_date not used anywhere else so playing with it here
+        now_date += datetime.timedelta(days=1)
+
+#    print(f"{sun.get_sunset_time()}, or with {now.date()}->{sun.get_sunset_time(now.date())}, or with {tz}->{event_time}")
     # Calculate Recording Window
     start_time = event_time + datetime.timedelta(minutes=args.start_offset)
     end_time = event_time + datetime.timedelta(minutes=args.end_offset)
@@ -78,7 +86,7 @@ def main():
 
     if wait_seconds < 0:
         print("Error: Start time has already passed for today.")
-        print(f"{start_time.strftime('%H:%M')}-{now.strftime('%H:%M')} = {start_time-now} or {wait_seconds=}")
+        print(f"{start_time.strftime('%m/%d %H:%M')} - {now.strftime('%m/%d %H:%M')} = {start_time-now} or {wait_seconds=}")
         sys.exit(1)
 
     # Wait for the start time

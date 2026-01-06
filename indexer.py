@@ -71,7 +71,7 @@ def main():
     with open(MANIFEST_FILE, 'w') as f:
         json.dump(data, f, indent=2)
     
-    print(f"Manifest updated at {MANIFEST_FILE}")
+    print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M%S')}  Manifest updated at {MANIFEST_FILE}")
 
 if __name__ == "__main__":
     main()

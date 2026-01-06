@@ -1,4 +1,5 @@
 # TO-DO
+- [ ] switch to capturing stills during capture time and then combining into a video at the end instead
 - [ ] create how-to in this repo and generally useful README
 - [ ] grab the last frame (maybe more? config file?) of each video and save them separately, making some sort of other timelapse over multiple days with those
 - [ ] integrate into HA for easier access, gemini can theoretically help with that
@@ -20,8 +21,9 @@ There are a few scripts that are needed in order to do this:
   * occasional backups of crontab config are made and pushed here for saving. Backup made with `crontab -l > crontab.bak`
   * an example crontab file is included with this repo (`crontab_example.bak`)but it needs to be installed to function (see above)
 
-## Web server
-current root: `<this_dir>/webroot`
-config file: /etc/nginx/sites-available/default 
-command to restart after changes: `sudo systemctl restart nginx`
-`index.html` is copied into this repo in order to have it all saved along side code, but lives in current root
+## Web server Details
+* running nginx with basic config to serve directories/files 
+* current root: `<this_dir>/webroot`
+* config file: /etc/nginx/sites-available/default 
+* command to restart after changes: `sudo systemctl restart nginx`
+* `index.html` is copied into this repo in order to have it all saved along side code, but lives in current webroot
