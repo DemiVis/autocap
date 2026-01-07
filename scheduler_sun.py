@@ -100,7 +100,8 @@ def main():
         "/usr/bin/python3", RECORD_SCRIPT,
         "--cam", args.cam,
         "--duration", str(int(duration_seconds)),
-        "--speed", args.speed
+        "--speed", args.speed,
+        "--suffix", args.mode
     ]
     
     # Execute and capture output for the log

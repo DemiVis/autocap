@@ -19,11 +19,11 @@ except FileNotFoundError:
 CAM_CONFIG = config['cameras']
 OUTPUT_ROOT = config['system']['webroot']
 
-def record_stream(cam_name, duration, speed=1.0, resolution=None):
+def record_stream(cam_name, duration, speed=1.0, resolution=None, suffix=""):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     cam_dir = os.path.join(OUTPUT_ROOT, cam_name)
-    raw_file = os.path.join(cam_dir, f"{timestamp}_raw.mp4")
-    final_file = os.path.join(cam_dir, f"{timestamp}.mp4")
+    raw_file = os.path.join(cam_dir, f"{cam_name}_{timestamp}_raw.mp4")
+    final_file = os.path.join(cam_dir, f"{cam_name}_{timestamp}{suffix}.mp4")
 
     # ensure directory exists
     os.makedirs(cam_dir, exist_ok=True)
@@ -47,6 +47,8 @@ def record_stream(cam_name, duration, speed=1.0, resolution=None):
         print(f"[!] Error capturing stream from {cam_name}")
         return
 
+    print(f"Captured raw video {raw_file} ({os.path.getsize(raw_file)/1024/1024} MB)")
+
     # 2. Process Video (Speed up / Resize)
     # If speed is 1.0 and no res change, just rename raw file
     if speed == 1.0 and resolution is None:
@@ -67,20 +69,20 @@ def record_stream(cam_name, duration, speed=1.0, resolution=None):
     if resolution:
         filter_chains.append(f"scale={resolution}")
 
-    cmd_process = ["ffmpeg", "-y", "-i", raw_file, "-filter:v", ",".join(filter_chains)]
-    
-    # Remove audio if speeding up (audio sounds weird sped up)
-    if speed != 1.0:
-        cmd_process.append("-an")
+    cmd_process = ["ffmpeg", "-an", "-y", "-i", raw_file, "-filter:v", ",".join(filter_chains)]
 
     cmd_process.append(final_file)
 
     try:
-        subprocess.run(cmd_process, check=True)
+        subprocess.run(cmd_process, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         os.remove(raw_file) # Delete raw file to save space
         print(f"[+] Processed & Saved: {final_file}")
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as err:
         print("[!] Error processing video")
+        print(f"{err.returncode=}")
+        print("output=")
+        print(str(err.output))
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -88,6 +90,7 @@ if __name__ == "__main__":
     parser.add_argument("--duration", type=int, required=True, help="Duration in seconds")
     parser.add_argument("--speed", type=float, default=1.0, help="Speed multiplier (e.g. 2.0)")
     parser.add_argument("--res", type=str, default=None, help="Resolution (e.g. 1280:720)")
+    parser.add_argument("--suffix", type=str, default="", help="string to append to the end of the filename")
     
     args = parser.parse_args()
     
@@ -95,4 +98,4 @@ if __name__ == "__main__":
         print("Invalid camera name.")
         sys.exit(1)
 
-    record_stream(args.cam, args.duration, args.speed, args.res)
+    record_stream(args.cam, args.duration, args.speed, args.res, args.suffix)
