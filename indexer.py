@@ -3,8 +3,9 @@ import os
 import json
 import datetime
 
+import health_monitor
+
 # --- LOAD CONFIGS ---
-# --- LOAD CONFIG ---
 CONFIG_PATH = os.path.join(os.path.dirname(__file__),"config.json")
 
 try:
@@ -65,7 +66,9 @@ def main():
     data = {
         "generated_at": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         "cameras": get_cameras(),
-        "logs": get_logs()
+        "logs": get_logs(),
+        "temp_f": health_monitor.get_cpu_temperature_f(),
+        "wifi_status": health_monitor.get_wifi_signal_strength()
     }
 
     with open(MANIFEST_FILE, 'w') as f:

@@ -4,3 +4,5 @@
 # ignore the actual config file (secrets!) and real crontab (details about local system)
 config.json 
 crontab.bak
+
+__pycache__/**

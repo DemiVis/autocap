@@ -9,8 +9,29 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
         
         .container { max-width: 900px; margin: 0 auto; }
-        h1 { border-bottom: 2px solid #ddd; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .refresh-time { font-size: 0.8rem; color: #777; font-weight: normal; }
+
+        /* Header Section */
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        h1 { margin: 0; padding: 0; font-size: 2em; }
+
+        .status-group {
+            display: grid;
+            grid-template-columns: max-content max-content; /* Two columns sized to content */
+            column-gap: 15px; /* Gap between label and value */
+            row-gap: 2px;     /* Small gap between lines */
+            font-size: 0.8rem;
+            color: #777;
+            line-height: 1.2;
+            text-align: left; /* Ensure text aligns left within the grid cells */
+        }
 
         /* Camera Grid */
         h3 { margin-top: 30px; color: #555; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px; }
@@ -55,10 +76,14 @@
 <body>
 
 <div class="container">
-    <h1>
-        AutoCap RPi NVR Dashboard 
-        <span class="refresh-time" id="last-refreshed">Loading...</span>
-    </h1>
+    <div class="header-bar">
+        <h1>AutoCap RPi NVR Dashboard</h1>
+        <div class="status-group">
+            <div>Manifest Updated:</div> <div id="last-refreshed">Loading...</div>
+            <div>System Temp:</div>      <div id="system-temp">Loading...</div>
+            <div>System Network:</div>   <div id="network-status">Loading...</div>
+        </div>
+    </div>
 
     <h3>Detected Cameras</h3>
     <div id="cam-grid" class="grid">
@@ -86,7 +111,9 @@
             if (!response.ok) throw new Error("Manifest not found. Wait for indexer.py to run.");
             const data = await response.json();
 
-            document.getElementById('last-refreshed').textContent = "Manifest Updated: " + data.generated_at;
+            document.getElementById('last-refreshed').textContent = data.generated_at;
+            document.getElementById('system-temp').textContent =    data.temp_f + "F";
+            document.getElementById('network-status').textContent = data.wifi_status.signal_level_dbm + "dBm (quality=" + data.wifi_status.link_quality + ")";
 
             // 2. Render Cameras
             const grid = document.getElementById('cam-grid');

@@ -28,6 +28,9 @@ LOG_DIR=$PROJ_ROOT/webroot/logs/
 # run the indexer script every 5min to make sure its up to date
 */5 * * * * /usr/bin/python3 #PROJ_ROOT/indexer.py
 
+# fetch and log the health status of the rpi
+* */1 * * * /usr/bin/python3 $PROJ_ROOT/health_monitor.py --output $LOG_DIR/health_log.txt
+
 # dump current crontab config into a log file
 */15 * * * * crontab -l > $LOG_DIR/crontab_config.log 
 
