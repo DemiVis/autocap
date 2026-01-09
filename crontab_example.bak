@@ -25,25 +25,24 @@
 PROJ_ROOT=/home/pi/autocap/
 LOG_DIR=$PROJ_ROOT/webroot/logs/
 
-# run the indexer script every 5min to make sure its up to date
-*/5 * * * * /usr/bin/python3 #PROJ_ROOT/indexer.py
+# run the indexer script every 10min to make sure its up to date
+* */10 * * * /usr/bin/python3 $PROJ_ROOT/indexer.py
 
-# fetch and log the health status of the rpi
-* */1 * * * /usr/bin/python3 $PROJ_ROOT/health_monitor.py --output $LOG_DIR/health_log.txt
+# fetch and log the health status of the rpi once per hour
+*/1 * * * * /usr/bin/python3 $PROJ_ROOT/health_monitor.py --output $LOG_DIR/health_log.txt
 
-# dump current crontab config into a log file
-*/15 * * * * crontab -l > $LOG_DIR/crontab_config.log 
+# dump current crontab config into a log file once per hour
+*/1 * * * * crontab -l > $LOG_DIR/crontab_config.txt
 
 # Run sunrise scripts at 3:00 AM daily, always before sunrise here
-0 3 * * * /usr/bin/python3 $PROJ_ROOT/scheduler_sun.py --cam cam1 --mode sunrise --start_offset -20 --end_offset 30 --speed 20.0 >> $LOG_DIR/logs_sunrise_cam1.txt 2>&1
-0 3 * * * /usr/bin/python3 $PROJ_ROOT/scheduler_sun.py --cam cam2 --mode sunrise --start_offset -10 --end_offset 20 --speed 20.0 >> $LOG_DIR/logs_sunrise_cam2.txt 2>&1
+0 3 * * * /usr/bin/python3 $PROJ_ROOT/scheduler_sun.py --cam cam2 --mode sunrise --start_offset -45 --end_offset 45 --interval 10 >> $LOG_DIR/logs_sunrise_cam2.txt 2>&1
 
 # Run sunset scripts at 3:00 PM daily, always before sunset here.
-0 15 * * * /usr/bin/python3 $PROJ_ROOT/scheduler_sun.py --cam cam1 --mode sunset --start_offset -20 --end_offset 30 --speed 20.0 >> $LOG_DIR/logs_sunset_cam1.txt 2>&1
-0 15 * * * /usr/bin/python3 $PROJ_ROOT/scheduler_sun.py --cam cam2 --mode sunset --start_offset -10 --end_offset 45 --speed 20.0 >> $LOG_DIR/logs_sunset_cam2.txt 2>&1
+0 15 * * * /usr/bin/python3 $PROJ_ROOT/scheduler_sun.py --cam cam1 --mode sunset --start_offset -45 --end_offset 45 --interval 10 >> $LOG_DIR/logs_sunset_cam1.txt 2>&1
 
-# example of a fixed schedule to record at the same time every day
-#30 11 * * * /usr/bin/python3 $PROJ_ROOT/record.py --cam cam1 --duration 5700 >> $LOG_DIR/logs_fixed_cam1.txt 2>&1
+# fixed schedule to record at the same time every day
+0 9 * * * /usr/bin/python3 $PROJ_ROOT/record.py --cam cam2 --duration 1 --interval 1 --skip-video --suffix "_9am" >> $LOG_DIR/logs_9a_cam2.txt 2>&1
+0 17 * * * /usr/bin/python3 $PROJ_ROOT/record.py --cam cam1 --duration 1 --interval 1 --skip-video --suffix "_5pm" >> $LOG_DIR/logs_5p_cam1.txt 2>&1
 
 # --- CLEANUP ---
 # Delete old videos every night at 1AM

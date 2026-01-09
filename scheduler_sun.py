@@ -34,7 +34,7 @@ def get_args():
     parser.add_argument("--mode", required=True, choices=['sunrise', 'sunset'], help="Event type")
     parser.add_argument("--start_offset", type=int, default=-20, help="Minutes relative to event to START (negative = before)")
     parser.add_argument("--end_offset", type=int, default=30, help="Minutes relative to event to END")
-    parser.add_argument("--speed", type=str, default="1.0", help="Speed multiplier for processing")
+    parser.add_argument("--interval", type=str, default="10", help="Time in seconds between frames capturd for timelapse.")
     parser.add_argument("--lat", type=float, default=DEFAULT_LAT, help="Latitude")
     parser.add_argument("--long", type=float, default=DEFAULT_LONG, help="Longitude")
     return parser.parse_args()
@@ -100,7 +100,7 @@ def main():
         "/usr/bin/python3", RECORD_SCRIPT,
         "--cam", args.cam,
         "--duration", str(int(duration_seconds)),
-        "--speed", args.speed,
+        "--interval", args.interval,
         "--suffix", args.mode
     ]
     

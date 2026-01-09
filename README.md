@@ -1,9 +1,12 @@
 # TO-DO
-- [ ] switch to capturing stills during capture time and then combining into a video at the end instead
 - [ ] create how-to in this repo and generally useful README
 - [ ] grab the last frame (maybe more? config file?) of each video and save them separately, making some sort of other timelapse over multiple days with those
 - [ ] integrate into HA for easier access, gemini can theoretically help with that
 - [ ] add today's sunrise/sunset times to index.html
+- [ ] fix eth0 mess, point internet at wlan only permanently, put details into README 
+- [ ] make sure that fixes the time sync issue possiblity, put details into README
+- [ ] fix permissions on the mounted drive so can make a "latest_sunrise" and "latest_sunset" symlink and make that symlink, then point HA to it
+- [ ] add ability to capture single frames relative to sunrise/sunset time (to scheduler_sun.py)
 
 # NOTES
 ## how it works 
@@ -20,6 +23,11 @@ There are a few scripts that are needed in order to do this:
   * crontab can be accessed and edited directly with `sudo crontab -e` to see what the cript arguments and time settings are. 
   * occasional backups of crontab config are made and pushed here for saving. Backup made with `crontab -l > crontab.bak`
   * an example crontab file is included with this repo (`crontab_example.bak`)but it needs to be installed to function (see above)
+
+Obviously the local time must be setup correctly, so if you're having trouble getting network time (but have a 
+network connection) you can run the following command to set the time based on the network once manually while
+you wait for the background sync to work more accurately
+`sudo date -s "$(wget -qSO- --max-redirect=0 google.com 2>&1 | grep Date: | cut -d' ' -f5-8)Z"` 
 
 ## Web server Details
 * running nginx with basic config to serve directories/files 
