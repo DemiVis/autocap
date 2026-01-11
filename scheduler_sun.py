@@ -101,7 +101,7 @@ def main():
         "--cam", args.cam,
         "--duration", str(int(duration_seconds)),
         "--interval", args.interval,
-        "--suffix", args.mode
+        "--suffix", "_"+args.mode
     ]
     
     # Execute and capture output for the log

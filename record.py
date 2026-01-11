@@ -73,7 +73,7 @@ def generate_timelapse(cam_name, duration, interval, resolution=None, suffix="",
     file_prefix = f"{cam_name}_{timestamp_str}"
     
     # Pattern for ffmpeg to write/read images (e.g., cam1_2023..._%04d.jpg)
-    image_pattern = os.path.join(raw_dir, f"{file_prefix}_%04d.jpg")
+    image_pattern = os.path.join(raw_dir, f"{file_prefix}_%04d{suffix}.jpg")
     
     # Final video output
     final_video_path = os.path.join(video_dir, f"{file_prefix}{suffix}.mp4")

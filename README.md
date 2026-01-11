@@ -29,9 +29,18 @@ network connection) you can run the following command to set the time based on t
 you wait for the background sync to work more accurately
 `sudo date -s "$(wget -qSO- --max-redirect=0 google.com 2>&1 | grep Date: | cut -d' ' -f5-8)Z"` 
 
+Sometimes the network breaks because the eth0 becomes the default route to the internet (even though it's on a VLAN with only the cameras). This can be temporarily repaird with
+`sudo ip route del default via 192.168.1.1 dev eth0` 
+should work to get the right routing tables setup for real (permanently) otherwise this command is needed frequently, but for now this works
+
 ## Web server Details
 * running nginx with basic config to serve directories/files 
 * current root: `<this_dir>/webroot`
 * config file: /etc/nginx/sites-available/default 
 * command to restart after changes: `sudo systemctl restart nginx`
 * `index.html` is copied into this repo in order to have it all saved along side code, but lives in current webroot
+
+## HA Connection
+This is connected to HA in two ways.
+1. Through the software at https://github.com/ironsheep/RPi-Reporter-MQTT2HA-Daemon in order to report on the system itself. This is installed and managed at `/opt/RPi-Reporter-MQTT2HA-Daemon` per repo recommendations
+2. through things where more deatils will be added in forwarding camera streams and accessing the latest video from each cam
